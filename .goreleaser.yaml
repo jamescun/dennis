@@ -1,0 +1,63 @@
+version: 2
+
+project_name: dennis
+
+before:
+  hooks:
+  - go mod tidy
+  - go generate ./...
+
+builds:
+- id: dennis
+  env:
+  - CGO_ENABLED=0
+  goos:
+  - linux
+  - windows
+  - darwin
+  goarch:
+  - amd64
+  - arm64
+  tags:
+  - package
+  flags:
+  - "-trimpath"
+  ldflags:
+  - "-s -w -X github.com/jamescun/dennis/app/pkg/build.version={{ .Version }} -X github.com/jamescun/dennis/app/pkg/build.commit={{ .Commit }}"
+
+archives:
+- id: dennis
+  formats: [tar.gz]
+  name_template: >-
+    {{ .ProjectName }}_
+    {{- .Os }}_
+    {{- if eq .Arch "amd64" }}x86_64
+    {{- else }}{{ .Arch }}{{ end }}
+  format_overrides:
+  - goos: windows
+    formats: [zip]
+
+nfpms:
+- id: dennis
+  homepage: https://github.com/jamescun/dennis
+  maintainer: James Cunningham <me@jamescun.com>
+  description: Query multiple DNS resolvers for records.
+  license: Apache 2.0
+  formats:
+  - deb
+  - rpm
+  contents:
+  - src: extra/systemd.service
+    dst: /etc/systemd/system/dennis.service
+    file_info:
+      mode: 0644
+  - type: config|noreplace
+    src: config.example.yml
+    dst: /etc/dennis/config.yml
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - "^docs:"
+    - "^test:"

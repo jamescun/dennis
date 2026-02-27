@@ -1,0 +1,29 @@
+version: "2"
+
+run:
+  tests: false
+
+linters:
+  default: none
+
+  enable:
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - errcheck
+    - forbidigo
+    - gocritic
+    - gosec
+    - govet
+    - ineffassign
+    - lll
+    - staticcheck
+    - unused
+
+  settings:
+    gocritic:
+      disabled-checks:
+        - ifElseChain
+    lll:
+      line-length: 120

@@ -1,0 +1,27 @@
+---
+# This is an example YAML configuration file for DENNIS.
+#
+# This configuration will launch an http server on `localhost:8080`, querying
+# CloudFlare and Google DNS, storing results on disk at `/tmp/DENNIS.json`.
+#
+# See app/config/config.go for full documentation of DENNIS's configuration
+# structures.
+
+version: 1
+
+logging:
+  debug: false
+  json: true
+
+listen:
+  addr: "localhost:8080"
+
+resolvers:
+- name: "CloudFlare"
+  addr: "1.1.1.1:53"
+- name: "Google"
+  addr: "8.8.4.4:53"
+
+db:
+  file:
+    path: "/tmp/dennis.json"

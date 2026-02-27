@@ -1,0 +1,9 @@
+services:
+  dennis:
+    image: james/dennis:1.0.0
+    restart: unless-stopped
+    ports:
+    - 8080:8080
+    volumes:
+    - ./config.yml:/etc/dennis/config.yml:ro
+    - ./data:/data
