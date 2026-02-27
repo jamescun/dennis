@@ -24,4 +24,4 @@ resolvers:
 
 db:
   file:
-    path: "/tmp/dennis.json"
+    path: "/data/dennis.json"
