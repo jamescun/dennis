@@ -4,6 +4,8 @@ _Pronounced DI-N-ES, DENNIS EXTERNAL NETWORK NAME INQUIRY SYSTEM._
 
 DENNIS is a web-based utility to query multiple DNS resolvers for the same name.
 
+<img src="extra/screenshot.png" width="574" height="217" alt="DENNIS UI Screenshot">
+
 **Rationale:** I maintain multiple DNS servers whose configuration _should_ be identical, for both resolution and authoritative for internal domains in a split-horizon setup. This utility lets me view the resolution of all these DNS servers in one place, to identify configuration mismatches, as well as watch cached results be evicted.
 
 
@@ -94,7 +96,7 @@ The `listen` section configures how the integrated web server in DENNIS will acc
 
 ```yaml
 listen:
-  addr: localhost:8080
+  addr: "localhost:8080"
 ```
 
 
@@ -113,10 +115,10 @@ It is an array of resolver configurations, and at least one resolver is required
 
 ```yaml
 resolvers:
-- name: CloudFlare
-  addr: 1.1.1.1:53
-- name: Google DNS
-  addr: 8.8.4.4:53
+- name: "CloudFlare"
+  addr: "1.1.1.1:53"
+- name: "Google DNS"
+  addr: "8.8.4.4:53"
 ```
 
 
@@ -141,7 +143,7 @@ Care is taken to lock around read/write cycles to this file, but it is still onl
 ```yaml
 db:
   file:
-    path: /tmp/dennis.json
+    path: "/tmp/dennis.json"
 ```
 
 #### PostgreSQL
@@ -161,7 +163,7 @@ See the [libpq](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ
 ```yaml
 db:
   postgres:
-    url: postgres://username:password@localhost/dennis?sslmode=disable
+    url: "postgres://username:password@localhost/dennis?sslmode=disable"
 ```
 
 
@@ -183,7 +185,7 @@ Internally this database backend uses the JSON key type.
 ```yaml
 db:
   redis:
-    addr: localhost:6379
-	username: dennis
-	password: changeme
+    addr: "localhost:6379"
+	username: "dennis"
+	password: "changeme"
 ```
