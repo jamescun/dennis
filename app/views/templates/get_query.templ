@@ -1,0 +1,38 @@
+package templates
+
+import (
+	"time"
+
+	"github.com/jamescun/dennis/app/models"
+)
+
+// GetQuery renders the result of querying the configured DNS resolvers. If not
+// all resolvers have completed, it will display a spinner and refresh
+// automatically until they have.
+templ GetQuery(q *models.Query) {
+	@page(q.Type + ": " + q.Name) {
+		<h2>{ q.Type }: { q.Name }</h2>
+
+		if q.FinishedAt == nil {
+			<p>Resolving, please wait...</p>
+
+			<meta http-equiv="Refresh" content="1" />
+		} else {
+			<p>Finished At: { q.FinishedAt.Format(time.RFC3339) }</p>
+		}
+
+		for _, lookup := range q.Lookups {
+			<h3>{ lookup.Resolver }</h3>
+
+			<p>Duration: { lookup.RTT }ms</p>
+
+			for _, record := range lookup.Records {
+				for _, content := range record.Content {
+					<pre><code>{ record.TTL } IN { q.Type } { content }</code></pre>
+				}
+			}
+		}
+
+		<a href="/">&laquo; return to homepage</a>
+	}
+}

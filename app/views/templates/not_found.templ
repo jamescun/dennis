@@ -1,0 +1,11 @@
+package templates
+
+// NotFound is the page served by DENNIS when it's web server is requested a
+// page that does not exist.
+templ NotFound() {
+	@page("Not Found") {
+		<h1>Uh oh! That page does not exist...</h1>
+
+		<p>The page or resource you requested does not exist.</p>
+	}
+}

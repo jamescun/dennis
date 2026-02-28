@@ -1,0 +1,46 @@
+package templates
+
+import (
+	"github.com/jamescun/dennis/app/pkg/build"
+)
+
+// NoPageTitle is given to page() to indicate there is no specific page title
+// to render, and just the brand name should be considered.
+const NoPageTitle = ""
+
+// page is a template wrapper that includes the base HTML and CSS assets for
+// all other pages.
+templ page(pageTitle string) {
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		if pageTitle == NoPageTitle {
+			<title>DENNIS</title>
+		} else {
+			<title>{ pageTitle } - DENNIS</title>
+		}
+		<link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+	</head>
+	<body>
+		<header>
+			<h1>DENNIS</h1>
+
+			<hr />
+		</header>
+
+		<main>
+			{ children... }
+		</main>
+
+		<footer>
+			<hr />
+
+			<p>Powered By: <a href="https://github.com/jamescun/dennis">DENNIS</a>.</p>
+
+			<p>Version: <code>{ build.GetVersion() }</code> Commit: <code>{ build.GetCommit(7) }</code></p>
+		</footer>
+	</body>
+	</html>
+}

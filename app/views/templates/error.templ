@@ -1,0 +1,13 @@
+package templates
+
+// Error is the page served by DENNIS when an unexpected error occurs, and
+// the user should check the server logs to see what happened.
+templ Error() {
+	@page("Error") {
+		<h2>Uh oh! An unexpected error occurred...</h2>
+
+		<p>Your request could not be completed as an unexpected error occurred.</p>
+
+		<p>You or the server administrator should check the servers logs to see what happened.</p>
+	}
+}
