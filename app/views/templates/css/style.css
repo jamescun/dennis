@@ -2,3 +2,17 @@ body {
 	font-family: monospace;
 	background-color:#F5F3EB;
 }
+
+table.records {
+	margin-bottom: 20px;
+
+	text-align: left;
+	border: 1px #cacaca solid;
+	border-bottom: none;
+}
+
+table.records th, table.records td {
+	padding: 5px;
+
+	border-bottom: 1px #cacaca solid;
+}

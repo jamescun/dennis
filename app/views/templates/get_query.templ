@@ -21,17 +21,30 @@ templ GetQuery(q *models.Query) {
 			<p>Finished At: { q.FinishedAt.Format(time.RFC3339) }</p>
 		}
 
-		for _, lookup := range q.Lookups {
-			<h3>{ lookup.Resolver }</h3>
+		<table width="600" class="records">
+			<thead>
+				<tr>
+					<th>TTL</th>
+					<th>Content</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, lookup := range q.Lookups {
+					<tr>
+						<th colspan="2">{ lookup.Resolver }</th>
+					</tr>
 
-			<p>Duration: { lookup.RTT }ms</p>
-
-			for _, record := range lookup.Records {
-				for _, content := range record.Content {
-					<pre><code>{ record.TTL } IN { q.Type } { content }</code></pre>
+					for _, record := range lookup.Records {
+						for _, content := range record.Content {
+							<tr>
+								<td width="50">{ record.TTL }</td>
+								<td>{ content }</td>
+							</tr>
+						}
+					}
 				}
-			}
-		}
+			</tbody>
+		</table>
 
 		<a href="/">&laquo; return to homepage</a>
 	}
