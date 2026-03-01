@@ -84,11 +84,15 @@ type Resolver struct {
 	// Required.
 	Name string `json:"name"`
 
-	// Addr is the IP address of the DNS resolver, optionally including a port
-	// number. If no port number is specified, port 53 will be assumed.
+	// Addr is the IP address of the DNS resolver. If it is not on port 53, set
+	// `port` below.
 	//
 	// Required.
 	Addr string `json:"addr"`
+
+	// Port is the port number on the host addr where the DNS resolver accepts
+	// queries. If not set, port 53 will be used.
+	Port int `json:"port,omitempty"`
 }
 
 // DB configures where Query objects will be stored between requests. Only one

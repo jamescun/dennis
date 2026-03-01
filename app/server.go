@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"net"
+	"strconv"
 	"sync"
 	"time"
 
@@ -46,9 +48,14 @@ func NewServer(db db.DB, rsv []*config.Resolver, log *slog.Logger) *Server {
 	client := new(dns.Client)
 
 	for _, r := range rsv {
+		port := "53"
+		if r.Port > 0 {
+			port = strconv.Itoa(r.Port)
+		}
+
 		s.rsv = append(s.rsv, &resolver{
 			name:   r.Name,
-			addr:   r.Addr,
+			addr:   net.JoinHostPort(r.Addr, port),
 			client: client,
 		})
 	}

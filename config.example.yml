@@ -18,9 +18,11 @@ listen:
 
 resolvers:
 - name: "CloudFlare"
-  addr: "1.1.1.1:53"
+  addr: "1.1.1.1"
+  port: 53
 - name: "Google"
-  addr: "8.8.4.4:53"
+  addr: "8.8.4.4"
+  port: 53
 
 db:
   file:

@@ -95,6 +95,10 @@ func (r *Resolver) validate() *ValidationError {
 		return &ValidationError{Field: "addr", Message: "addr of resolver is required"}
 	}
 
+	if r.Port < 0 || r.Port > 65535 {
+		return &ValidationError{Field: "port", Message: "port must be between 1 and 65535"}
+	}
+
 	return nil
 }
 

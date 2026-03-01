@@ -1,6 +1,6 @@
 # DENNIS
 
-_Pronounced DI-N-ES, DENNIS EXTERNAL NETWORK NAME INQUIRY SYSTEM._
+_Pronounced DEE-N-ES, DENNIS EXTERNAL NETWORK NAME INQUIRY SYSTEM._
 
 DENNIS is a web-based utility to query multiple DNS resolvers for the same name.
 
@@ -51,7 +51,7 @@ systemctl start dennis
 If you are using Docker, you may run DENNIS like:
 
 ```sh
-docker run --name dennis -p 8080:8080 -v ./config.yml:/etc/dennis/config.yml -v ./data:/data james/dennis:1.0.0
+docker run --name dennis -p 8080:8080 -v ./config.yml:/etc/dennis/config.yml -v ./data:/data james/dennis:1.0.1
 ```
 
 This will mount your local `config.yml` into the container as `/etc/dennis/config.yml` (the default path), mount the local directory `data/` as `/data`, and expose the DENNIS server at port 8080 on your machine.
@@ -109,16 +109,17 @@ It is an array of resolver configurations, and at least one resolver is required
 | name | type   | required | description                             |
 | ---- | ------ | -------- | --------------------------------------- |
 | name | string | true     | name of resolver as displayed in the UI |
-| addr | string | true     | `host:port` for the DNS resolver        |
+| addr | string | true     | ip address of the DNS resolver          |
+| port | int    | false    | port of the DNS resolver if not 53      |
 
 **Example:**
 
 ```yaml
 resolvers:
 - name: "CloudFlare"
-  addr: "1.1.1.1:53"
+  addr: "1.1.1.1"
 - name: "Google DNS"
-  addr: "8.8.4.4:53"
+  addr: "8.8.4.4"
 ```
 
 
@@ -156,7 +157,7 @@ Once given a database to connect to, DENNIS will apply it's migrations to create
 | ---- | ------ | -------- | -------------------------------------------------------- |
 | url  | string | true     | libpq-compatible connection string for PostgreSQL server |
 
-See the [libpq](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-URIS) documentation for a description of the values supported for a connection url. Also see the [pgxpool](https://pkg.go.dev/github.com/jackc/pgx/v5@v5.8.0/pgxpool#ParseConfig) documentation, the PostgreSQL driver user, for it's handing of connection url.
+See the [libpq](https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-URIS) documentation for a description of the values supported for a connection url. Also see the [pgxpool](https://pkg.go.dev/github.com/jackc/pgx/v5@v5.8.0/pgxpool#ParseConfig) documentation, the PostgreSQL driver used, for it's handling of connection urls.
 
 **Example:**
 
