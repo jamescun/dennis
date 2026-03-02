@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/jamescun/dennis/app/models"
 
@@ -33,6 +34,10 @@ type Queries interface {
 	// UpdateQuery updates a Query in the database. Currently only FinishedAt
 	// is updatable. If it does not exist, ErrQueryNotFound is returned.
 	UpdateQuery(ctx context.Context, query *models.Query) error
+
+	// DeleteQueriesOlderThan removes all Queries from the database whose age
+	// (determined from CreatedAt) is older than maxAge.
+	DeleteQueriesOlderThan(ctx context.Context, maxAge time.Duration) error
 }
 
 // Lookups is used to operate on Lookup objects that live under Query objects

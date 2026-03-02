@@ -21,34 +21,40 @@ type DB struct {
 	// conn is an interface containing just the methods we need from the Redis
 	// client.
 	conn interface {
+		Expire(ctx context.Context, key string, expiry time.Duration) *redis.BoolCmd
 		JSONArrAppend(ctx context.Context, key, path string, values ...any) *redis.IntSliceCmd
 		JSONGet(ctx context.Context, key string, paths ...string) *redis.JSONCmd
 		JSONSet(ctx context.Context, key, path string, value any) *redis.StatusCmd
 	}
+
+	// maxAge optionally sets an expiration on keys in Redis on create/update.
+	maxAge time.Duration
 }
 
 // New initializes a new Redis database implementation. The PING command will
 // be attempted after creating the connection to validate connectivity and
-// authentication (if configured).
-func New(ctx context.Context, opts *redis.Options) (*DB, error) {
+// authentication (if configured). If maxAge is set, keys will automatically
+// expire from Redis after said age is reached.
+func New(ctx context.Context, opts *redis.Options, maxAge time.Duration) (*DB, error) {
 	conn := redis.NewClient(opts)
 	err := conn.Ping(ctx).Err()
 	if err != nil {
 		return nil, fmt.Errorf("could not ping redis: %w", err)
 	}
 
-	return &DB{conn: conn}, nil
+	return &DB{conn: conn, maxAge: maxAge}, nil
 }
 
 // FromConfig configures a Redis database implementation from a configuration
-// object supplied by the user.
-func FromConfig(ctx context.Context, cfg *config.RedisDB) (*DB, error) {
+// object supplied by the user. If maxAge is set, keys will automatically
+// expire from Redis after said age is reached.
+func FromConfig(ctx context.Context, cfg *config.RedisDB, maxAge time.Duration) (*DB, error) {
 	return New(ctx, &redis.Options{
 		Addr:     cfg.Addr,
 		DB:       cfg.DB,
 		Username: cfg.Username,
 		Password: cfg.Password,
-	})
+	}, maxAge)
 }
 
 func (d *DB) CreateQuery(ctx context.Context, query *models.Query) error {
@@ -63,6 +69,13 @@ func (d *DB) CreateQuery(ctx context.Context, query *models.Query) error {
 	err = d.conn.JSONSet(ctx, queryKey(query.ID), "$", bytes).Err()
 	if err != nil {
 		return fmt.Errorf("could not set JSON key: %w", err)
+	}
+
+	if d.maxAge > 0 {
+		err := d.conn.Expire(ctx, queryKey(query.ID), d.maxAge).Err()
+		if err != nil {
+			return fmt.Errorf("could not set key expire: %w", err)
+		}
 	}
 
 	return nil
@@ -94,6 +107,19 @@ func (d *DB) UpdateQuery(ctx context.Context, query *models.Query) error {
 		}
 	}
 
+	if d.maxAge > 0 {
+		err := d.conn.Expire(ctx, queryKey(query.ID), d.maxAge).Err()
+		if err != nil {
+			return fmt.Errorf("could not set key expire: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (d *DB) DeleteQueriesOlderThan(_ context.Context, _ time.Duration) error {
+	// this method is a no-op, as removing old Queries is handled by Redis' own
+	// expiration mechanism.
 	return nil
 }
 

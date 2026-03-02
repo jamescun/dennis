@@ -36,9 +36,20 @@ func run(ctx context.Context, configFile string) int {
 
 	log := cfg.Logging.GetLogger()
 
-	conn, err := getDB(ctx, cfg.DB)
+	queryMaxAge := time.Duration(0)
+	if cfg.QueryMaxAge > 0 {
+		queryMaxAge = time.Duration(cfg.QueryMaxAge) * time.Second
+	}
+
+	conn, err := getDB(ctx, cfg.DB, queryMaxAge)
 	if err != nil {
 		return exitError(1, "db: %s", err)
+	}
+
+	if queryMaxAge > 0 {
+		log.Debug("beginning to expire old queries", slog.Duration("max_age", queryMaxAge))
+
+		go expireOldQueries(ctx, log, conn, queryMaxAge)
 	}
 
 	api := app.NewServer(conn, cfg.Resolvers, log)
@@ -85,7 +96,7 @@ func run(ctx context.Context, configFile string) int {
 }
 
 // getDB configures a database backend from the configuration file.
-func getDB(ctx context.Context, cfg config.DB) (db.DB, error) {
+func getDB(ctx context.Context, cfg config.DB, maxAge time.Duration) (db.DB, error) {
 	switch {
 	case cfg.File != nil:
 		conn, err := file.FromConfig(ctx, cfg.File)
@@ -96,7 +107,7 @@ func getDB(ctx context.Context, cfg config.DB) (db.DB, error) {
 		return conn, nil
 
 	case cfg.Redis != nil:
-		conn, err := redis.FromConfig(ctx, cfg.Redis)
+		conn, err := redis.FromConfig(ctx, cfg.Redis, maxAge)
 		if err != nil {
 			return nil, fmt.Errorf("redis: %w", err)
 		}
@@ -105,6 +116,25 @@ func getDB(ctx context.Context, cfg config.DB) (db.DB, error) {
 
 	default:
 		return nil, fmt.Errorf("no database configured")
+	}
+}
+
+// expireOldQueries is a scheduled task that runs every maxAge/2 to remove any
+// Queries that are no longer requires as per the configuration of QueryMaxAge.
+func expireOldQueries(ctx context.Context, log *slog.Logger, conn db.DB, maxAge time.Duration) {
+	ticker := time.NewTicker(maxAge / 2)
+	defer ticker.Stop()
+
+	select {
+	case <-ticker.C:
+		err := conn.DeleteQueriesOlderThan(ctx, maxAge)
+		if err != nil {
+			log.Error("could not expire old queries", slog.String("error", err.Error()))
+		}
+
+	case <-ctx.Done():
+		// process is shutting down, stop expiring old Queries.
+		return
 	}
 }
 

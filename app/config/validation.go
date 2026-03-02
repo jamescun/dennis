@@ -63,6 +63,13 @@ func (c *Config) Validate() error {
 		}
 	}
 
+	if c.QueryMaxAge < 0 {
+		return &ValidationError{
+			Field:   "queryMaxAge",
+			Message: "Query maximum age must be a positive integer in seconds",
+		}
+	}
+
 	if err := c.DB.validate(); err != nil {
 		return err.prefix("db")
 	}

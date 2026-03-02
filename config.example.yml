@@ -24,6 +24,9 @@ resolvers:
   addr: "8.8.4.4"
   port: 53
 
+# expire Query results after a day.
+queryMaxAge: 86400
+
 db:
   file:
     path: "/data/dennis.json"

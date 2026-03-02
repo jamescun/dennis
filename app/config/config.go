@@ -27,6 +27,10 @@ type Config struct {
 	// Required. At least on Resolver is required.
 	Resolvers []*Resolver `json:"resolvers"`
 
+	// QueryMaxAge, if set, configures the length of time in seconds the
+	// database backend will store Query results before being removed.
+	QueryMaxAge int `json:"queryMaxAge,omitempty"`
+
 	// DB configures where Query objects will be stored.
 	//
 	// Required.

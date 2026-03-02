@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"slices"
 	"sync"
 	"time"
 
@@ -116,6 +117,23 @@ func (d *DB) UpdateQuery(_ context.Context, query *models.Query) error {
 	})
 	if err != nil {
 		return fmt.Errorf("could not update query: %w", err)
+	}
+
+	return nil
+}
+
+func (d *DB) DeleteQueriesOlderThan(ctx context.Context, maxAge time.Duration) error {
+	err := d.write(func(f *format) error {
+		for i, q := range f.Queries {
+			if time.Since(q.CreatedAt) > maxAge {
+				slices.Delete(f.Queries, i, i+1)
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
+		return err
 	}
 
 	return nil

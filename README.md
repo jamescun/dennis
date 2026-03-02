@@ -65,6 +65,13 @@ DENNIS is configured using a JSON or YAML configuration file. An example configu
 
 This full configuration specification can be found in code at [app/config/config.go](app/config/config.go).
 
+| name        | type   | required | description                          |
+| ----------- | ------ | -------- | ------------------------------------ |
+| logging     | object | false    | see [Logging](#logging) below        |
+| listen      | object | true     | see [Listen](#listen) below          |
+| resolvers   | object | true     | see [Resolvers](#resolvers) below    |
+| queryMaxAge | int    | false    | enable result expiration, in seconds |
+| db          | object | true     | see [Database](#database) below      |
 
 ### Logging
 
