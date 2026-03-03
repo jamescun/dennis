@@ -17,7 +17,7 @@ type Lookup struct {
 
 	// Error is the error rcode returned by a DNS resolver if the name could
 	// not be resolved.
-	Error string `json:"error,omitempty"`
+	Error *string `json:"error,omitempty"`
 
 	// Records are the results, if any, returned by a DNS resolver.
 	Records []*Record `json:"records"`

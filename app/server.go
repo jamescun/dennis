@@ -121,9 +121,9 @@ func (s *Server) resolve(ctx context.Context, wg *sync.WaitGroup, log *slog.Logg
 	}
 
 	if res.Rcode != dns.RcodeSuccess {
-		l.Error = dns.RcodeToString[res.Rcode]
+		l.Error = new(dns.RcodeToString[res.Rcode])
 	} else if errors.Is(err, context.Canceled) {
-		l.Error = "CANCELED"
+		l.Error = new("CANCELED")
 	} else {
 		for _, answer := range res.Answer {
 			rr := models.RecordFromRR(answer)

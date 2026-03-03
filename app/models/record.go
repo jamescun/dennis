@@ -12,16 +12,16 @@ type Record struct {
 	TTL int `json:"ttl"`
 
 	// Priority indicates the preference of a MX or SRV DNS record.
-	Priority int `json:"priority,omitempty"`
+	Priority *int `json:"priority,omitempty"`
 
 	// Weight is used to balance between SRV DNS records of equal priority.
-	Weight int `json:"weight,omitempty"`
+	Weight *int `json:"weight,omitempty"`
 
 	// Port is the network port of a service exposed with an SRV DNS record.
-	Port int `json:"port,omitempty"`
+	Port *int `json:"port,omitempty"`
 
 	// Tag is used by CAA records to define the type of certificate.
-	Tag string `json:"tag,omitempty"`
+	Tag *string `json:"tag,omitempty"`
 
 	// Content is the configuration of a DNS record, such as an IP Address for
 	// an A/AAAA record or another name for a CNAME record.
@@ -45,7 +45,7 @@ func RecordFromRR(rr dns.RR) *Record {
 	case *dns.CAA:
 		return &Record{
 			TTL:     int(rr.Hdr.TTL),
-			Tag:     rr.Tag,
+			Tag:     new(rr.Tag),
 			Content: []string{rr.CAA.Value},
 		}
 	case *dns.CNAME:
@@ -61,7 +61,7 @@ func RecordFromRR(rr dns.RR) *Record {
 	case *dns.MX:
 		return &Record{
 			TTL:      int(rr.Hdr.TTL),
-			Priority: int(rr.MX.Preference),
+			Priority: new(int(rr.MX.Preference)),
 			Content:  []string{rr.MX.Mx},
 		}
 	case *dns.NS:
@@ -82,15 +82,15 @@ func RecordFromRR(rr dns.RR) *Record {
 	case *dns.SRV:
 		return &Record{
 			TTL:      int(rr.Hdr.TTL),
-			Priority: int(rr.SRV.Priority),
-			Weight:   int(rr.SRV.Weight),
-			Port:     int(rr.SRV.Port),
+			Priority: new(int(rr.SRV.Priority)),
+			Weight:   new(int(rr.SRV.Weight)),
+			Port:     new(int(rr.SRV.Port)),
 			Content:  []string{rr.SRV.Target},
 		}
 	case *dns.SVCB:
 		return &Record{
 			TTL:      int(rr.Hdr.TTL),
-			Priority: int(rr.SVCB.Priority),
+			Priority: new(int(rr.SVCB.Priority)),
 			Content:  []string{rr.SVCB.Target},
 		}
 	case *dns.TXT:
