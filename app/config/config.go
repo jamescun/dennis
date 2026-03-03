@@ -105,6 +105,9 @@ type DB struct {
 	// File configures a local file as the database.
 	File *FileDB `json:"file,omitempty"`
 
+	// Postgres configures a PostgreSQL server as the database.
+	Postgres *PostgresDB `json:"postgres,omitempty"`
+
 	// Redis configures an in-memory Redis server as the database.
 	Redis *RedisDB `json:"redis,omitempty"`
 }
@@ -118,6 +121,18 @@ type FileDB struct {
 	//
 	// Required.
 	Path string `json:"path"`
+}
+
+// PostgresDB configures a PostgreSQL database to store Query objects.
+type PostgresDB struct {
+	// URL is the libpq-compatible connection string of the PostgreSQL database
+	// to connect to.
+	//
+	// See https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING-URIS
+	// for more information.
+	//
+	// Required.
+	URL string `json:"url"`
 }
 
 // RedisDB configures a Redis server to store Query objects.

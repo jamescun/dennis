@@ -112,14 +112,21 @@ func (r *Resolver) validate() *ValidationError {
 func (d *DB) validate() *ValidationError {
 	switch {
 	case d.File != nil:
-		if d.Redis != nil {
+		if d.Postgres != nil || d.Redis != nil {
 			return &ValidationError{Field: "file", Message: "only one database can be configured at once"}
 		}
 
 		return d.File.validate().prefix("file")
 
+	case d.Postgres != nil:
+		if d.File != nil || d.Redis != nil {
+			return &ValidationError{Field: "postgres", Message: "only one database can be configured at once"}
+		}
+
+		return d.Postgres.validate().prefix("postgres")
+
 	case d.Redis != nil:
-		if d.File != nil {
+		if d.File != nil || d.Postgres != nil {
 			return &ValidationError{Field: "redis", Message: "only one database can be configured at once"}
 		}
 
@@ -137,6 +144,14 @@ func (f *FileDB) validate() *ValidationError {
 
 	if filepath.IsAbs(f.Path) {
 		return &ValidationError{Field: "path", Message: "path is not an absolute path"}
+	}
+
+	return nil
+}
+
+func (p *PostgresDB) validate() *ValidationError {
+	if p.URL == "" {
+		return &ValidationError{Field: "url", Message: "libpq url for PostgreSQL database is required"}
 	}
 
 	return nil

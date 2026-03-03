@@ -51,7 +51,7 @@ systemctl start dennis
 If you are using Docker, you may run DENNIS like:
 
 ```sh
-docker run --name dennis -p 8080:8080 -v ./config.yml:/etc/dennis/config.yml -v ./data:/data james/dennis:1.0.1
+docker run --name dennis -p 8080:8080 -v ./config.yml:/etc/dennis/config.yml -v ./data:/data james/dennis:1.0.2
 ```
 
 This will mount your local `config.yml` into the container as `/etc/dennis/config.yml` (the default path), mount the local directory `data/` as `/data`, and expose the DENNIS server at port 8080 on your machine.
@@ -156,7 +156,7 @@ db:
 
 #### PostgreSQL
 
-The `postgres` database backend uses a PostgreSQL database to store queries and their results.
+The `postgres` database backend uses a PostgreSQL database to store queries and their results. DENNIS is built around PostgreSQL 18.
 
 Once given a database to connect to, DENNIS will apply it's migrations to create the necessary tables.
 

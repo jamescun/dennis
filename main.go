@@ -15,6 +15,7 @@ import (
 	"github.com/jamescun/dennis/app/config"
 	"github.com/jamescun/dennis/app/db"
 	"github.com/jamescun/dennis/app/db/file"
+	"github.com/jamescun/dennis/app/db/postgres"
 	"github.com/jamescun/dennis/app/db/redis"
 	"github.com/jamescun/dennis/app/pkg/build"
 	"github.com/jamescun/dennis/app/pkg/http/web"
@@ -102,6 +103,14 @@ func getDB(ctx context.Context, cfg config.DB, maxAge time.Duration) (db.DB, err
 		conn, err := file.FromConfig(ctx, cfg.File)
 		if err != nil {
 			return nil, fmt.Errorf("file: %w", err)
+		}
+
+		return conn, nil
+
+	case cfg.Postgres != nil:
+		conn, err := postgres.FromConfig(ctx, cfg.Postgres)
+		if err != nil {
+			return nil, fmt.Errorf("postgres: %w", err)
 		}
 
 		return conn, nil

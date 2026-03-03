@@ -2,11 +2,17 @@ package models
 
 import (
 	"time"
+
+	"github.com/gofrs/uuid"
 )
 
 // Lookup represents a single Lookup executed against a single DNS resolver as
 // part of a Query of multiple DNS resolvers.
 type Lookup struct {
+	// ID is optionally set by a database backend implementation if it has
+	// normalized Lookups out from the Query object.
+	ID *uuid.UUID `json:"id,omitempty"`
+
 	// Resolver is the name DNS resolver used for this Lookup, as configured by
 	// `name` in Config.Resolvers.
 	Resolver string `json:"resolver"`
